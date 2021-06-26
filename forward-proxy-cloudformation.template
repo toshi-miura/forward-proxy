@@ -55,13 +55,6 @@ Resources:
             Action: 
               - "sts:AssumeRole"
       Path: "/"
-  WhitelistParameter:
-    Type: "AWS::SSM::Parameter"
-    Properties:
-      Name: "/forward-proxy/WHITELIST"
-      Type: "StringList"
-      Value: "www.google.com:443,ifconfig.co:80,ifconfig.co:443"
-      Description: "Whitelist"
   ForwardProxyCluster:
     Type: AWS::ECS::Cluster
     Properties:
@@ -88,9 +81,6 @@ Resources:
             - ContainerPort: 8080
               HostPort: 8080
               Protocol: tcp
-          Secrets: 
-            - Name: WHITELIST
-              ValueFrom: !Ref WhitelistParameter
       Cpu: 256
       ExecutionRoleArn: !Ref ExecutionRole
       Family: ForwardProxy
