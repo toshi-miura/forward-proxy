@@ -47,7 +47,12 @@ func main() {
 		fmt.Printf("WHITELIST not set\n")
 		os.Exit(1)
 	}
+	if whitelist == "*" {
+		fmt.Printf("WHITELIST *\n")		
+	}
 
+
+	
 	h := &Handler{
 		whitelistMap: make(map[string]bool),
 	}
@@ -72,6 +77,10 @@ func (h *Handler) handleRequest(r *http.Request, ctx *goproxy.ProxyCtx) (*http.R
 	} else {
 		host = r.URL.Host
 	}
+	if _, ok := h.whitelistMap["*"]; ok {
+		Info.Printf("Host all allowed: %s\n", host)
+		return r, nil	
+	}	
 	if _, ok := h.whitelistMap[host]; !ok {
 		Info.Printf("Host not allowed: %s\n", host)
 		return r, goproxy.NewResponse(r,
@@ -81,6 +90,12 @@ func (h *Handler) handleRequest(r *http.Request, ctx *goproxy.ProxyCtx) (*http.R
 	return r, nil
 }
 func (h *Handler) handleConnect(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
+	
+	if _, ok := h.whitelistMap["*"]; ok {
+		Info.Printf("Host all allowed: %s\n", host)
+		return goproxy.OkConnect, host
+	}
+
 	if _, ok := h.whitelistMap[host]; !ok {
 		Info.Printf("Host not allowed: %s\n", host)
 		return goproxy.RejectConnect, host
