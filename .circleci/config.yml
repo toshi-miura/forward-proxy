@@ -18,9 +18,8 @@ jobs:
             docker build -t forward-proxy .
       - run:
           name: Install trivy
-          command: |
-            
-            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          command: |            
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
       - run:
           name: Scan the local image with trivy
           command: trivy --exit-code 0 --no-progress forward-proxy
